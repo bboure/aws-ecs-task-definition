@@ -1,0 +1,37 @@
+name: sls-es-demo
+stage: dev
+region: eu-west-1
+
+AwsEcsTaskDefinition:
+  component: "../"
+  inputs:
+    region: ${region}
+    taskDefinition:
+      family: my-task
+      cpu: "1024"
+      memory: "2048"
+      volumes:
+          - name: foo
+            host:
+              sourcePath: /home/foo
+          - name: bar
+            host:
+              sourcePath: /home/bar
+      containerDefinitions:
+          - name: myContainer
+            portMappings:
+              - hostPort: 80
+                containerPort: 80
+                protocol: tcp
+            cpu: 0
+            environment:
+              - name: FOO
+                value: BAR
+            mountPoints:
+              - containerPath: /var/www/foo
+                sourceVolume: foo
+              - containerPath: /var/www/bar
+                sourceVolume: bar
+            memory: 768
+            image: alpine:latest
+            essential: true
